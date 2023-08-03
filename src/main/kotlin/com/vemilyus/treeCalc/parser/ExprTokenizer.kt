@@ -5,7 +5,7 @@ import com.vemilyus.treeCalc.model.TokenType
 import com.vemilyus.treeCalc.model.TokenizerResult
 
 class ExprTokenizer {
-    @Suppress("ComplexCondition", "CyclomaticComplexMethod", "ReturnCount")
+    @Suppress("ComplexCondition", "CyclomaticComplexMethod", "NestedBlockDepth", "ReturnCount")
     fun tokenize(source: String): TokenizerResult {
         val tokens = mutableListOf<Token>()
 
@@ -14,9 +14,12 @@ class ExprTokenizer {
         var end: Int? = 0
         var doubleHasDot = false
 
-        fun addToken() {
-            val tt = tokenType ?: return
-            val pos = (start ?: return)..<(end ?: return)
+        fun addToken(): TokenizerResult.Err? {
+            val tt = tokenType ?: return null
+            val pos = (start ?: return null)..<(end ?: return null)
+
+            if (tt == TokenType.NUMBER && doubleHasDot && source[pos.last] == '.')
+                return unexpected('.', pos.last)
 
             tokenType = null
             start = null
@@ -24,16 +27,13 @@ class ExprTokenizer {
             doubleHasDot = false
 
             tokens.add(Token(tt, source.substring(pos), pos))
+
+            return null
         }
 
         for ((position, char) in source.withIndex()) {
             when (char) {
-                ' ', '\t' -> {
-                    if (tokenType == TokenType.NUMBER && doubleHasDot && source[end!! - 1] == '.')
-                        return unexpected('.', end!! - 1)
-
-                    addToken()
-                }
+                ' ', '\t' -> addToken()?.let { return it }
 
                 '.' ->
                     if (
@@ -45,15 +45,15 @@ class ExprTokenizer {
                         end = position + 1
                         doubleHasDot = true
                     } else
-                        addToken()
+                        addToken()?.let { return it }
 
-                '-' ->
-                    if (tokenType == null) {
-                        tokenType = TokenType.Sub
-                        start = position
-                        end = position + 1
-                    } else
-                        addToken()
+                '-' -> {
+                    addToken()?.let { return it }
+
+                    tokenType = TokenType.Sub
+                    start = position
+                    end = position + 1
+                }
 
                 in '0'..'9' ->
                     if (tokenType == null || tokenType == TokenType.NUMBER || tokenType == TokenType.Sub) {
@@ -61,10 +61,10 @@ class ExprTokenizer {
                         start = start ?: position
                         end = position + 1
                     } else
-                        addToken()
+                        addToken()?.let { return it }
 
                 '+', '*', '/' -> {
-                    addToken()
+                    addToken()?.let { return it }
 
                     tokenType =
                         when (char) {
@@ -77,7 +77,7 @@ class ExprTokenizer {
                     start = position
                     end = position + 1
 
-                    addToken()
+                    addToken()?.let { return it }
                 }
 
                 else -> return unexpected(char, position)
@@ -85,7 +85,7 @@ class ExprTokenizer {
         }
 
         // adds the final token if there is no whitespace at the end
-        addToken()
+        addToken()?.let { return it }
 
         return TokenizerResult.Ok(tokens)
     }

@@ -6,7 +6,6 @@ import com.vemilyus.treeCalc.model.TokenizerResult
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import kotlin.math.exp
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ExprTokenizerTest {
@@ -70,6 +69,51 @@ class ExprTokenizerTest {
     }
 
     @Test
+    fun `it should tokenize correctly without whitespace`() {
+        val source = "+-*/1.2-23"
+
+        val tokens = exprTokenizer.tokenize(source)
+
+        assertEquals(
+            TokenizerResult.Ok(
+                listOf(
+                    Token(
+                        TokenType.Add,
+                        "+",
+                        0..<1
+                    ),
+                    Token(
+                        TokenType.Sub,
+                        "-",
+                        1..<2
+                    ),
+                    Token(
+                        TokenType.Mul,
+                        "*",
+                        2..<3
+                    ),
+                    Token(
+                        TokenType.Div,
+                        "/",
+                        3..<4
+                    ),
+                    Token(
+                        TokenType.NUMBER,
+                        "1.2",
+                        4..<7
+                    ),
+                    Token(
+                        TokenType.NUMBER,
+                        "-23",
+                        7..<10
+                    )
+                )
+            ),
+            tokens
+        )
+    }
+
+    @Test
     fun `it should fail to tokenize some inputs`() {
         var source = "asd"
 
@@ -95,6 +139,15 @@ class ExprTokenizerTest {
 
         assertEquals(
             TokenizerResult.Err("Unexpected character '.'", 5),
+            result
+        )
+
+        source = "12.+32"
+
+        result = exprTokenizer.tokenize(source)
+
+        assertEquals(
+            TokenizerResult.Err("Unexpected character '.'", 2),
             result
         )
     }
