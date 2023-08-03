@@ -29,11 +29,8 @@ sealed interface TokenizerResult : Result<TokenizerResult.Ok, TokenizerResult.Er
         val cause: Throwable? = null
     ) : TokenizerResult
 
-    override val isOk
-        get() = this is Ok
-
-    override val isErr: Boolean
-        get() = this is Err
+    override fun asErr() =
+        this as? Err
 
     override fun unwrap(): Ok =
         this as? Ok ?: error("not Ok")

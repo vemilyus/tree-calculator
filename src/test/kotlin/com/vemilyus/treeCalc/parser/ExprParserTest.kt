@@ -107,13 +107,13 @@ class ExprParserTest {
                 Expr.AddSub(
                     Expr.Term(1.0),
                     Expr.MulDiv(
+                        Expr.Term(2.0),
                         Expr.MulDiv(
-                            Expr.Term(2.0),
                             Expr.Term(3.0),
-                            MulDivOp.Mul
+                            Expr.Term(4.0),
+                            MulDivOp.Div
                         ),
-                        Expr.Term(4.0),
-                        MulDivOp.Div
+                        MulDivOp.Mul
                     ),
                     AddSubOp.Add
                 )

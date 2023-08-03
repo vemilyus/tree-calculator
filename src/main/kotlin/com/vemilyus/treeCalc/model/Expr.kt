@@ -30,11 +30,8 @@ sealed interface ParserResult : Result<ParserResult.Ok, ParserResult.Err> {
         val cause: Throwable? = null
     ) : ParserResult
 
-    override val isOk: Boolean
-        get() = this is Ok
-
-    override val isErr: Boolean
-        get() = this is Err
+    override fun asErr() =
+        this as? Err
 
     override fun unwrap(): Ok =
         this as? Ok ?: error("not Ok")
