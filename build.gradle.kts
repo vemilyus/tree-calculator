@@ -16,6 +16,10 @@ dependencies {
     testRuntimeOnly(libs.junitEngine)
 }
 
+tasks.withType<JavaExec> {
+    standardInput = System.`in`
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(JVM_17)

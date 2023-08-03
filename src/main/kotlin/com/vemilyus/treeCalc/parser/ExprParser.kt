@@ -21,7 +21,7 @@ class ExprParser {
 }
 
 private val mulDivTypes = listOf(TokenType.Mul, TokenType.Div)
-private val addSubTypes = listOf(TokenType.Add, TokenType.Sub)
+private val addSubTypes = listOf(TokenType.Add, TokenType.Sub, TokenType.NUMBER)
 
 @Suppress("ReturnCount")
 private fun parseMulDivExpr(tokens: List<Token>): Pair<ParserResult, List<Token>> {
@@ -61,8 +61,14 @@ private fun parseAddSubExpr(tokens: List<Token>): Pair<ParserResult, List<Token>
     if (remaining.isNotEmpty() && remaining.first().type in addSubTypes) {
         val tokensMut = remaining.toMutableList()
         val (op, correctToken) = tokensMut.takeToken(TokenType.Add, TokenType.Sub)
-        if (!correctToken)
+        if (op.type == TokenType.NUMBER && op.content.startsWith("-")) {
+            return ParserResult.Err(
+                "Unexpected number, did you mean '- ${op.content.trimStart('-')}'?",
+                op.position
+            ) to remaining
+        } else if (!correctToken)
             return ParserResult.Err("Unexpected token '${op.content}', expected '+' or '-'", op.position) to remaining
+
 
         val (rightRes, rightRem) = parseMulDivExpr(tokensMut)
         val rightExpr = rightRes.asErr()?.let { return it to rightRem } ?: rightRes.unwrap().expr
