@@ -6,6 +6,7 @@ import com.vemilyus.treeCalc.model.TokenizerResult
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import kotlin.math.exp
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ExprTokenizerTest {
@@ -65,6 +66,36 @@ class ExprTokenizerTest {
                 )
             ),
             tokens
+        )
+    }
+
+    @Test
+    fun `it should fail to tokenize some inputs`() {
+        var source = "asd"
+
+        var result = exprTokenizer.tokenize(source)
+
+        assertEquals(
+            TokenizerResult.Err("Unexpected character 'a'", 0),
+            result
+        )
+
+        source = "12. / 32"
+
+        result = exprTokenizer.tokenize(source)
+
+        assertEquals(
+            TokenizerResult.Err("Unexpected character '.'", 2),
+            result
+        )
+
+        source = "12 + . 32"
+
+        result = exprTokenizer.tokenize(source)
+
+        assertEquals(
+            TokenizerResult.Err("Unexpected character '.'", 5),
+            result
         )
     }
 }
