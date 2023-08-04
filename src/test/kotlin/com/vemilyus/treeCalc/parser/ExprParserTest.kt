@@ -121,4 +121,30 @@ class ExprParserTest {
             expr
         )
     }
+
+    @Test
+    fun `it should parse parentheses correctly`() {
+        val source = "(1 + 2) * 3 / 4"
+
+        val expr = exprParser.parse(source)
+
+        assertEquals(
+            ParserResult.Ok(
+                Expr.MulDiv(
+                    Expr.AddSub(
+                        Expr.Term(1.0),
+                        Expr.Term(2.0),
+                        AddSubOp.Add
+                    ),
+                    Expr.MulDiv(
+                        Expr.Term(3.0),
+                        Expr.Term(4.0),
+                        MulDivOp.Div
+                    ),
+                    MulDivOp.Mul
+                )
+            ),
+            expr
+        )
+    }
 }

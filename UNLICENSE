@@ -1,25 +1,3 @@
-# Calculathor
-
-An example program that parses a simple mathematical expression into a syntax tree
-and evaluates the result.
-
-It can be run simply by executing this command:
-
-```shell
-./gradlew --quiet --console=plain run
-```
-
-It supports the basic operators (`+`, `-`, `*`, `/`) and parentheses.
-
-As it uses `Double` internally the final result will always be a floating point number.
-
-## Requirements
-
-- JDK 17
-
-## License
-
-```text
 This is free and unencumbered software released into the public domain.
 
 Anyone is free to copy, modify, publish, use, compile, sell, or
@@ -44,4 +22,3 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
-```

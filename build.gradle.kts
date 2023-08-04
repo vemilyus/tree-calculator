@@ -16,10 +16,6 @@ dependencies {
     testRuntimeOnly(libs.junitEngine)
 }
 
-tasks.withType<JavaExec> {
-    standardInput = System.`in`
-}
-
 kotlin {
     compilerOptions {
         jvmTarget.set(JVM_17)
@@ -32,4 +28,8 @@ tasks.test {
 
 application {
     mainClass.set("com.vemilyus.treeCalc.CalculathorKt")
+}
+
+tasks.withType<JavaExec> {
+    standardInput = System.`in`
 }

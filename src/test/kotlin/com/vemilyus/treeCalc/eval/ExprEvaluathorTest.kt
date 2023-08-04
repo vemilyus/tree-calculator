@@ -33,4 +33,16 @@ class ExprEvaluathorTest {
             result
         )
     }
+
+    @Test
+    fun `it should evaluate an expression containing parentheses`() {
+        val expr = exprParser.parse("(1 + 2) * 3 / 4").unwrap().expr
+
+        val result = exprEvaluathor.eval(expr)
+
+        assertEquals(
+            2.25,
+            result
+        )
+    }
 }

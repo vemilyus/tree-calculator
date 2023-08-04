@@ -4,8 +4,8 @@ import com.vemilyus.treeCalc.model.Token
 import com.vemilyus.treeCalc.model.TokenType
 import com.vemilyus.treeCalc.model.TokenizerResult
 
-class ExprTokenizer {
-    @Suppress("ComplexCondition", "CyclomaticComplexMethod", "NestedBlockDepth", "ReturnCount")
+class ExprLexer {
+    @Suppress("ComplexCondition", "CyclomaticComplexMethod", "LongMethod", "NestedBlockDepth", "ReturnCount")
     fun tokenize(source: String): TokenizerResult {
         val tokens = mutableListOf<Token>()
 
@@ -74,6 +74,26 @@ class ExprTokenizer {
                             else -> error("unreachable")
                         }
 
+                    start = position
+                    end = position + 1
+
+                    addToken()?.let { return it }
+                }
+
+                '(' -> {
+                    addToken()?.let { return it }
+
+                    tokenType = TokenType.ParenLeft
+                    start = position
+                    end = position + 1
+
+                    addToken()?.let { return it }
+                }
+
+                ')' -> {
+                    addToken()?.let { return it }
+
+                    tokenType = TokenType.ParenRight
                     start = position
                     end = position + 1
 

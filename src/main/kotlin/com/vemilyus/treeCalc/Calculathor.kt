@@ -14,6 +14,7 @@ fun main() {
     val exprParser = ExprParser()
     val exprEvaluathor = ExprEvaluathor()
 
+    @Suppress("LoopWithTooManyJumpStatements")
     while (true) {
         print("> ")
 

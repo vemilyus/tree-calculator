@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ExprTokenizerTest {
-    private val exprTokenizer = ExprTokenizer()
+class ExprLexerTest {
+    private val exprLexer = ExprLexer()
 
     @Test
     fun `it should produce an empty token list`() {
         val source = "     "
 
-        val tokens = exprTokenizer.tokenize(source)
+        val tokens = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Ok(emptyList()),
@@ -25,9 +25,9 @@ class ExprTokenizerTest {
 
     @Test
     fun `it should tokenize a bunch of stuff`() {
-        val source = "  + - * / 1.2 -23"
+        val source = "  + - * / 1.2 -23 ) ("
 
-        val tokens = exprTokenizer.tokenize(source)
+        val tokens = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Ok(
@@ -61,6 +61,16 @@ class ExprTokenizerTest {
                         TokenType.NUMBER,
                         "-23",
                         14..<17
+                    ),
+                    Token(
+                        TokenType.ParenRight,
+                        ")",
+                        18..<19
+                    ),
+                    Token(
+                        TokenType.ParenLeft,
+                        "(",
+                        20..<21
                     )
                 )
             ),
@@ -70,9 +80,9 @@ class ExprTokenizerTest {
 
     @Test
     fun `it should tokenize correctly without whitespace`() {
-        val source = "+-*/1.2-23"
+        val source = "+-*/1.2-23)("
 
-        val tokens = exprTokenizer.tokenize(source)
+        val tokens = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Ok(
@@ -106,6 +116,16 @@ class ExprTokenizerTest {
                         TokenType.NUMBER,
                         "-23",
                         7..<10
+                    ),
+                    Token(
+                        TokenType.ParenRight,
+                        ")",
+                        10..<11
+                    ),
+                    Token(
+                        TokenType.ParenLeft,
+                        "(",
+                        11..<12
                     )
                 )
             ),
@@ -117,7 +137,7 @@ class ExprTokenizerTest {
     fun `it should fail to tokenize some inputs`() {
         var source = "asd"
 
-        var result = exprTokenizer.tokenize(source)
+        var result = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Err("Unexpected character 'a'", 0),
@@ -126,7 +146,7 @@ class ExprTokenizerTest {
 
         source = "12. / 32"
 
-        result = exprTokenizer.tokenize(source)
+        result = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Err("Unexpected character '.'", 2),
@@ -135,7 +155,7 @@ class ExprTokenizerTest {
 
         source = "12 + . 32"
 
-        result = exprTokenizer.tokenize(source)
+        result = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Err("Unexpected character '.'", 5),
@@ -144,7 +164,7 @@ class ExprTokenizerTest {
 
         source = "12.+32"
 
-        result = exprTokenizer.tokenize(source)
+        result = exprLexer.tokenize(source)
 
         assertEquals(
             TokenizerResult.Err("Unexpected character '.'", 2),

@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Build with Gradle
+        uses: burrunan/gradle-cache-action@v1
+        with:
+          arguments: --console=plain build
+
+      - name: Test Report (${{ runner.os }})
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Tests (${{ runner.os }})
+          reporter: java-junit
+          path: '**/TEST-*.xml'

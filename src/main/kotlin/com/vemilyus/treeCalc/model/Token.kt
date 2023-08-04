@@ -17,6 +17,8 @@ enum class TokenType {
     Sub,
     Mul,
     Div,
+    ParenLeft,
+    ParenRight,
     NUMBER
 }
 
