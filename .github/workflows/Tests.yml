@@ -23,10 +23,10 @@ jobs:
         with:
           arguments: --console=plain build
 
-      - name: Test Report (${{ runner.os }})
+      - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: Tests (${{ runner.os }})
+          name: Tests
           reporter: java-junit
-          path: '**/TEST-*.xml'
+          path: 'build/test-results/test/TEST-*.xml'
